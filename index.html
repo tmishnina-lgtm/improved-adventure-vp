@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Военная психология — Обучающая платформа MVP</title>
+  <style>
+    :root {
+      --bg-main: #2b2d30;
+      --bg-panel: #202224;
+      --bg-card: #35383d;
+      --border-color: #484b52;
+      --text-main: #dcdcdc;
+      --text-khaki: #9cb896;
+      --accent-khaki: #556b2f;
+      --accent-hover: #6b8e23;
+      --metric-amber: #e5a93c;
+      --critical-red: #c84b4b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.4;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Навигация слева */
+    aside {
+      width: 320px;
+      background-color: var(--bg-panel);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-khaki);
+      font-size: 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .nav-list {
+      list-style: none;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .nav-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s ease;
+    }
+
+    .nav-item:hover:not(.disabled) {
+      background-color: var(--bg-card);
+    }
+
+    .nav-item.active {
+      background-color: var(--accent-khaki);
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .nav-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Главная панель дашборда */
+    main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-main);
+      overflow: hidden;
+    }
+
+    .top-bar {
+      padding: 16px 24px;
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .module-title {
+      font-size: 16px;
+      color: var(--text-khaki);
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-toggle {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle.active {
+      background-color: var(--accent-khaki);
+      color: #ffffff;
+      border-color: var(--accent-khaki);
+    }
+
+    .content-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Карточки терминов */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-term {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--text-khaki);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .card-def {
+      font-size: 13px;
+      text-align: justify;
+      color: var(--text-main);
+    }
+
+    /* Тесты */
+    .test-container {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 950px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .test-question-box {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .question-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text-khaki);
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid transparent;
+      transition: border 0.15s;
+    }
+
+    .option-label:hover {
+      border-color: var(--border-color);
+    }
+
+    .option-label input {
+      margin-top: 3px;
+      cursor: pointer;
+    }
+
+    .option-label.correct {
+      border-color: var(--text-khaki) !important;
+      background-color: rgba(156, 184, 150, 0.15) !important;
+    }
+
+    .option-label.wrong {
+      border-color: var(--critical-red) !important;
+      background-color: rgba(200, 75, 75, 0.15) !important;
+    }
+
+    /* Подвал / панель управления */
+    footer {
+      padding: 14px 24px;
+      background-color: var(--bg-panel);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-info {
+      font-size: 13px;
+      color: var(--metric-amber);
+      font-weight: bold;
+    }
+
+    .footer-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      background-color: var(--accent-khaki);
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    .btn:disabled {
+      background-color: var(--border-color);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .btn-check {
+      background-color: var(--metric-amber);
+      color: #1e1f22;
+    }
+
+    .btn-check:hover:not(:disabled) {
+      background-color: #d19630;
+    }
+  </style>
+</head>
+<body>
+
+  <aside>
+    <div class="sidebar-header">Курс: Военная психология</div>
+    <ul class="nav-list" id="moduleNav">
+      <li class="nav-item active" data-mod="1">Модуль 1. Основы общей психологии</li>
+      <li class="nav-item" data-mod="2">Модуль 2. Социальная психология</li>
+      <li class="nav-item" data-mod="3">Модуль 3. Специальная психология</li>
+      <li class="nav-item" data-mod="4">Модуль 4. Психология стресса</li>
+      <li class="nav-item" data-mod="5">Модуль 5. Психология служебной деятельности</li>
+      <li class="nav-item" data-mod="6">Модуль 6. Психодиагностика</li>
+      <li class="nav-item" data-mod="7">Модули 7–10. Теория и методология ВП</li>
+      <li class="nav-item" data-mod="11">Модули 11–12. Кризисная помощь и арт-терапия</li>
+    </ul>
+  </aside>
+
+  <main>
+    <header class="top-bar">
+      <div class="module-title" id="currentModuleLabel">Загрузка...</div>
+      <div class="view-toggle">
+        <button class="btn-toggle active" id="btnModeCards">Карточки понятий</button>
+        <button class="btn-toggle" id="btnModeTests">Промежуточное тестирование</button>
+      </div>
+    </header>
+
+    <div class="content-area" id="contentArea"></div>
+
+    <footer>
+      <div class="footer-info" id="blockIndicator">Инициализация...</div>
+      <div class="footer-controls">
+        <button class="btn" id="btnPrevBlock" disabled>Предыдущий блок</button>
+        <button class="btn btn-check" id="btnCheckAnswers" style="display: none;">Проверить ответы</button>
+        <button class="btn" id="btnNextBlock">Следующий блок</button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- База данных приложения -->
+  <script>
+    window.KnowledgeBase = { modules: {} };
+  </script>
+  <!-- Подключение массивов данных модулей -->
+  <script src="module1_data.js"></script>
+  <script src="module2_data.js"></script>
+  <script src="module3_data.js"></script>
+  <script src="module4_data.js"></script>
+  <script src="module5_data.js"></script>
+  <script src="module6_data.js"></script>
+  <script src="module7_10_data.js"></script>
+  <script src="module11_12_data.js"></script>
+
+  <script>
+    /* Логика ядра дашборда */
+    let currentModule = 1;
+    let currentMode = 'cards'; // 'cards' | 'tests'
+    let currentCardBlock = 0;
+    let currentTestBlock = 0;
+
+    const CARDS_PER_BLOCK = 30; // Вывод частями по 30 шт (10 блоков для 300 карточек)
+    const TESTS_PER_BLOCK = 30; // Вывод строго порциями по 30 шт
+
+    // Хранилище состояния ответов пользователя и порядка перемешивания вариантов
+    const userState = {
+      userAnswers: {},   // { [modId]: { [qGlobalIdx]: selectedOptIdx } }
+      shuffledTests: {}  // { [modId]: [ { q, shuffledOptions: [ {text, isCorrect, origIdx} ] } ] }
+    };
+
+    const contentArea = document.getElementById('contentArea');
+    const moduleLabel = document.getElementById('currentModuleLabel');
+    const blockIndicator = document.getElementById('blockIndicator');
+    const btnPrev = document.getElementById('btnPrevBlock');
+    const btnNext = document.getElementById('btnNextBlock');
+    const btnCheck = document.getElementById('btnCheckAnswers');
+    const btnModeCards = document.getElementById('btnModeCards');
+    const btnModeTests = document.getElementById('btnModeTests');
+    const moduleNav = document.getElementById('moduleNav');
+
+    function initModuleState(modId) {
+      if (!userState.userAnswers[modId]) userState.userAnswers[modId] = {};
+      if (!userState.shuffledTests[modId] && window.KnowledgeBase.modules[modId]) {
+        const rawTests = window.KnowledgeBase.modules[modId].tests || [];
+        userState.shuffledTests[modId] = rawTests.map(test => {
+          let opts = test.options.map((optText, idx) => ({
+            text: optText,
+            isCorrect: idx === test.correct,
+            origIdx: idx
+          }));
+          // Перемешивание вариантов Фишером-Йетсом
+          for (let i = opts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [opts[i], opts[j]] = [opts[j], opts[i]];
+          }
+          return { q: test.q, options: opts };
+        });
+      }
+    }
+
+    moduleNav.addEventListener('click', (e) => {
+      const item = e.target.closest('.nav-item');
+      if (!item || item.classList.contains('disabled')) return;
+
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+
+      currentModule = parseInt(item.getAttribute('data-mod'));
+      currentCardBlock = 0;
+      currentTestBlock = 0;
+      initModuleState(currentModule);
+      updateHeader();
+      renderContent();
+    });
+
+    btnModeCards.addEventListener('click', () => {
+      currentMode = 'cards';
+      btnModeCards.classList.add('active');
+      btnModeTests.classList.remove('active');
+      btnCheck.style.display = 'none';
+      renderContent();
+    });
+
+    btnModeTests.addEventListener('click', () => {
+      currentMode = 'tests';
+      btnModeTests.classList.add('active');
+      btnModeCards.classList.remove('active');
+      btnCheck.style.display = 'inline-block';
+      renderContent();
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentMode === 'cards' && currentCardBlock > 0) {
+        currentCardBlock--;
+        renderContent();
+      } else if (currentMode === 'tests' && currentTestBlock > 0) {
+        currentTestBlock--;
+        renderContent();
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      const maxBlocks = getMaxBlocks();
+      if (currentMode === 'cards' && currentCardBlock < maxBlocks - 1) {
+        currentCardBlock++;
+        renderContent();
+      } else if (currentMode === 'tests' && currentTestBlock < maxBlocks - 1) {
+        currentTestBlock++;
+        renderContent();
+      }
+    });
+
+    btnCheck.addEventListener('click', checkAnswers);
+
+    function updateHeader() {
+      const mod = window.KnowledgeBase.modules[currentModule];
+      moduleLabel.textContent = mod ? mod.title : `Модуль ${currentModule}`;
+    }
+
+    function getMaxBlocks() {
+      const mod = window.KnowledgeBase.modules[currentModule];
+      if (!mod) return 1;
+      const total = currentMode === 'cards' ? (mod.cards ? mod.cards.length : 0) : (mod.tests ? mod.tests.length : 0);
+      const size = currentMode === 'cards' ? CARDS_PER_BLOCK : TESTS_PER_BLOCK;
+      return Math.ceil(total / size) || 1;
+    }
+
+    function renderContent() {
+      contentArea.innerHTML = '';
+      const mod = window.KnowledgeBase.modules[currentModule];
+      if (!mod) {
+        contentArea.innerHTML = '<div style="padding: 20px; color: var(--metric-amber);">Материалы данного модуля находятся в стадии наполнения из базы знаний.</div>';
+        blockIndicator.textContent = 'Ожидание данных';
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+        return;
+      }
+
+      initModuleState(currentModule);
+      const maxBlocks = getMaxBlocks();
+      const curBlock = currentMode === 'cards' ? currentCardBlock : currentTestBlock;
+
+      blockIndicator.textContent = `Блок ${curBlock + 1} из ${maxBlocks} (Всего: ${currentMode === 'cards' ? mod.cards.length : mod.tests.length})`;
+      btnPrev.disabled = (curBlock === 0);
+      btnNext.disabled = (curBlock >= maxBlocks - 1);
+
+      if (currentMode === 'cards') {
+        renderCards(mod, curBlock);
+      } else {
+        renderTests(curBlock);
+      }
+      contentArea.scrollTop = 0;
+    }
+
+    function renderCards(mod, blockIdx) {
+      const grid = document.createElement('div');
+      grid.className = 'card-grid';
+      const start = blockIdx * CARDS_PER_BLOCK;
+      const slice = mod.cards.slice(start, start + CARDS_PER_BLOCK);
+
+      slice.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-term">#${start + i + 1}. ${item.term}</div>
+          <div class="card-def">${item.def}</div>
+        `;
+        grid.appendChild(card);
+      });
+      contentArea.appendChild(grid);
+    }
+
+    function renderTests(blockIdx) {
+      const container = document.createElement('div');
+      container.className = 'test-container';
+      const start = blockIdx * TESTS_PER_BLOCK;
+      const tests = userState.shuffledTests[currentModule] || [];
+      const slice = tests.slice(start, start + TESTS_PER_BLOCK);
+
+      slice.forEach((t, i) => {
+        const globalIdx = start + i;
+        const box = document.createElement('div');
+        box.className = 'test-question-box';
+        box.id = `qbox_${globalIdx}`;
+
+        let optionsHtml = '';
+        t.options.forEach((opt, optIdx) => {
+          const isChecked = userState.userAnswers[currentModule][globalIdx] === optIdx ? 'checked' : '';
+          optionsHtml += `
+            <label class="option-label" data-opt-idx="${optIdx}" data-correct="${opt.isCorrect}">
+              <input type="radio" name="q_${globalIdx}" value="${optIdx}" ${isChecked} onchange="saveAnswer(${currentModule}, ${globalIdx}, ${optIdx})">
+              <span>${opt.text}</span>
+            </label>
+          `;
+        });
+
+        box.innerHTML = `
+          <div class="question-title">Вопрос №${globalIdx + 1}. ${t.q}</div>
+          <div class="option-list">${optionsHtml}</div>
+        `;
+        container.appendChild(box);
+      });
+      contentArea.appendChild(container);
+    }
+
+    window.saveAnswer = function(modId, qIdx, optIdx) {
+      userState.userAnswers[modId][qIdx] = optIdx;
+      // Сброс подсветки при повторном выборе
+      const box = document.getElementById(`qbox_${qIdx}`);
+      if (box) {
+        box.querySelectorAll('.option-label').forEach(l => l.classList.remove('correct', 'wrong'));
+      }
+    };
+
+    function checkAnswers() {
+      const start = currentTestBlock * TESTS_PER_BLOCK;
+      const tests = userState.shuffledTests[currentModule] || [];
+      const slice = tests.slice(start, start + TESTS_PER_BLOCK);
+      let correctCount = 0;
+      let answeredCount = 0;
+
+      slice.forEach((t, i) => {
+        const globalIdx = start + i;
+        const box = document.getElementById(`qbox_${globalIdx}`);
+        const userChoice = userState.userAnswers[currentModule][globalIdx];
+
+        if (box) {
+          const labels = box.querySelectorAll('.option-label');
+          labels.forEach((label, optIdx) => {
+            label.classList.remove('correct', 'wrong');
+            const isCorrect = label.getAttribute('data-correct') === 'true';
+
+            if (userChoice !== undefined && userChoice === optIdx) {
+              if (isCorrect) {
+                label.classList.add('correct');
+                correctCount++;
+              } else {
+                label.classList.add('wrong');
+              }
+            } else if (isCorrect && userChoice !== undefined) {
+              label.classList.add('correct');
+            }
+          });
+          if (userChoice !== undefined) answeredCount++;
+        }
+      });
+
+      blockIndicator.textContent = `Результат блока: ${correctCount} из ${slice.length} верно (отвечено: ${answeredCount}/${slice.length})`;
+    }
+
+    // Инициализация первого модуля при старте
+    initModuleState(1);
+    updateHeader();
+    renderContent();
+  </script>
+</body>
+</html>
